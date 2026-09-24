@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clara Vance | Mechatronics & Product Design Engineering Portfolio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#FAF8F5',
+                        card: '#FFFFFF',
+                        slate: {
+                            800: '#2D3139',
+                            900: '#1E2229',
+                            600: '#525B6C',
+                            500: '#6C768A',
+                            400: '#94A0B4',
+                            100: '#F1F3F7',
+                            50: '#F8FAFC',
+                        },
+                        pastel: {
+                            rose: '#F7D6D0',
+                            roseDeep: '#E0A99E',
+                            roseText: '#8C483B',
+                            sage: '#D4E0D7',
+                            sageDeep: '#98B6A2',
+                            sageText: '#3B6149',
+                            periwinkle: '#E2E0F4',
+                            periwinkleDeep: '#A39EE0',
+                            periwinkleText: '#4E4896',
+                            butter: '#FCE8CC',
+                            butterDeep: '#E3B778',
+                            butterText: '#82581B',
+                            blush: '#FAECE9',
+                            mint: '#EDF5F0',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        serif: ['Newsreader', 'Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                    },
+                    boxShadow: {
+                        'pastel-sm': '0 2px 10px rgba(45, 49, 57, 0.03)',
+                        'pastel-md': '0 8px 24px -4px rgba(45, 49, 57, 0.06), 0 2px 6px -1px rgba(45, 49, 57, 0.04)',
+                        'pastel-lg': '0 20px 32px -8px rgba(45, 49, 57, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for FEA & Metrics Plots -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- React & Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            background-color: #FAF8F5;
+            color: #2D3139;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAF8F5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4E0D7;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #98B6A2;
+        }
+
+        /* Soft Pastel Background Grid/Dots Pattern */
+        .bg-pastel-grid {
+            background-size: 32px 32px;
+            background-image: 
+                radial-gradient(circle, rgba(152, 182, 162, 0.25) 1px, transparent 1px);
+        }
+
+        /* Subtle organic glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 224, 244, 0.6);
+        }
+
+        .serif-italic {
+            font-family: 'Newsreader', serif;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-slate-800 antialiased selection:bg-pastel-rose selection:text-slate-900">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // Default Student Portfolio Data
+        const INITIAL_PORTFOLIO_DATA = {
+            profile: {
+                name: "Clara Vance",
+                title: "B.S. Mechanical & Product Design Engineering",
+                university: "Stanford University",
+                gradYear: "June 2026",
+                gpa: "3.94 / 4.00",
+                tagline: "Combining mechanical rigor, human-centered design, dynamic prototyping, and thermal optimization for thoughtful physical products.",
+                location: "Palo Alto, CA",
+                status: "Seeking Full-Time Product Design & Mechanical Hardware Roles",
+                stats: [
+                    { label: "Hardware Projects", value: "12+", icon: "fa-compass-drafting" },
+                    { label: "CAD & FEA Hours", value: "1,400+", icon: "fa-cubes" },
+                    { label: "Technical GPA", value: "3.94", icon: "fa-graduation-cap" },
+                    { label: "Design Team Lead", value: "Solar Car Aerodynamics", icon: "fa-sun" }
+                ],
+                links: {
+                    github: "https://github.com",
+                    linkedin: "https://linkedin.com",
+                    grabcad: "https://grabcad.com",
+                    email: "clara.vance.eng@example.edu"
+                }
+            },
+            projects: [
+                {
+                    id: "ergonomic-prosthetic",
+                    title: "Adaptive Compliant Wrist Mechanism for Pediatric Prosthetics",
+                    category: "Mechanical Design",
+                    subCategory: "Biomechanics & 3D",
+                    tags: ["SolidWorks", "Compliant Mechanisms", "FEA", "Formlabs SLA", "GD&T"],
+                    metricBadge: "Mass Reduced: 28%",
+                    metricValue: "28%",
+                    thumbnail: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+                    summary: "Engineered a soft compliant wrist flexure for pediatric arm prosthetics, removing 14 mechanical fast assembly joints and cutting weight while doubling cyclic fatigue life.",
+                    overview: {
+                        problem: "Traditional pediatric prosthetics with metal hinges are heavy, require frequent maintenance, and pose pinch hazards for active children.",
+                        solution: "Monolithic compliant flexure molded from biocompatible TPU elastomeric polymer with continuous stress-relieving curve profiles.",
+                        constraints: "Mass < 120g, withstands 150 N load in torsion and extension without permanent creep."
+                    },
+                    bom: [
+                        { part: "Formlabs Tough 2000 Resin Flexure", qty: 1, cost: "$18.50", supplier: "Formlabs" },
+                        { part: "Titanium M3 Threaded Heat-Set Inserts", qty: 6, cost: "$4.20", supplier: "McMaster-Carr" },
+                        { part: "Biocompatible Silicone Wrist Sleeve", qty: 1, cost: "$12.00", supplier: "Smooth-On" }
+                    ],
+                    metricsData: {
+                        labels: ['0° Flex', '15° Flex', '30° Flex', '45° Flex', '60° Flex Max'],
+                        datasets: [{
+                            label: 'Peak von Mises Stress (MPa)',
+                            data: [0, 8.4, 18.2, 31.5, 48.0],
+                            borderColor: '#E0A99E',
+                            backgroundColor: 'rgba(247, 214, 208, 0.4)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    codeSnippet: `! Ansys Parametric Design Script for Compliant Flexure Leaf
+/PREP7
+ET,1,SOLID187
+MP,EX,1,2200     ! TPU Flexure Modulus (MPa)
+MP,PRXY,1,0.42    ! Poisson's Ratio
+
+! Apply Fixed Anchor at Wrist Base
+D,FIXED_BASE,ALL,0
+
+! Apply 120 N Torsional Moment at Hand Interface
+F,HAND_INTERFACE,FZ,120
+SOLVE`,
+                    fmea: [
+                        { failure: "Material fatigue from repeated cyclic bending", severity: "Medium", mitigation: "Added parabolic root fillets to eliminate stress concentration hotspots." },
+                        { failure: "Thermal expansion fitting slack", severity: "Low", mitigation: "Specified interference fit + heat-set brass threaded bushings." }
+                    ]
+                },
+                {
+                    id: "solar-car-aero",
+                    title: "Ultra-Light Carbon Composite Solar Car Canopy",
+                    category: "Sustainability/Research",
+                    subCategory: "Aerodynamics & CFD",
+                    tags: ["Ansys Fluent", "Carbon Fiber", "Vacuum Infusion", "CFD", "SolidWorks Surfacing"],
+                    metricBadge: "Drag Coeff: 0.114",
+                    metricValue: "Cd 0.114",
+                    thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+                    summary: "Designed and fabricated an ultra-aerodynamic solar canopy using curvature-continuous class-A surfacing and epoxy vacuum resin infusion.",
+                    overview: {
+                        problem: "Aerodynamic drag accounts for over 70% of total energy losses at cruising speed in competitive collegiate solar cars.",
+                        solution: "Developed an asymmetric canopy profile tailored to crosswind yaw angles, validated through CFD simulation and wind tunnel scale testing.",
+                        constraints: "Solar array surface area > 4.0 m² while maintaining driver sightline standards."
+                    },
+                    bom: [
+                        { part: "3K Twill Carbon Fiber Weave (200gsm)", qty: 12, cost: "$240.00", supplier: "Fibreglast" },
+                        { part: "Pro-Set Low Viscosity Epoxy Resin", qty: 2, cost: "$85.00", supplier: "Aircraft Spruce" },
+                        { part: "Rohacell Structural Foam Core", qty: 4, cost: "$110.00", supplier: "Evonik" }
+                    ],
+                    metricsData: {
+                        labels: ['Baseline Canopy', 'V1 Iteration', 'V2 Curved Profile', 'Final Optimized'],
+                        datasets: [{
+                            label: 'Drag Coefficient (Cd)',
+                            data: [0.165, 0.142, 0.128, 0.114],
+                            borderColor: '#98B6A2',
+                            backgroundColor: 'rgba(212, 224, 215, 0.4)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    codeSnippet: `# Python Surface Mesh Quality Metric Script
+import numpy as np
+
+def calculate_mesh_skewness(cell_volumes, optimal_volume):
+    skewness = np.abs(cell_volumes - optimal_volume) / optimal_volume
+    print(f"Max Cell Skewness: {np.max(skewness):.4f}")
+    return np.mean(skewness) < 0.25
+
+print("Mesh verification passed for Ansys Fluent boundary layer.")`,
+                    fmea: [
+                        { failure: "Delamination under high aerodynamic downforce", severity: "High", mitigation: "Co-cured structural foam core inserts along high-load rib paths." }
+                    ]
+                },
+                {
+                    id: "desktop-haptic-knob",
+                    title: "Active Haptic Control Dial with Brushless Motor",
+                    category: "Robotics & Control",
+                    subCategory: "Mechatronics",
+                    tags: ["STM32", "Field Oriented Control", "KiCad", "Embedded C++", "Magnetic Encoder"],
+                    metricBadge: "Latency: < 0.8ms",
+                    metricValue: "<0.8ms",
+                    thumbnail: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
+                    summary: "Built a tactile desktop interface dial that dynamically simulates physical detents, mechanical stops, friction, and spring tension using FOC motor control.",
+                    overview: {
+                        problem: "Physical dials lack tactile versatility for multi-parameter software control like CAD manipulation or audio mixing.",
+                        solution: "Custom BLDC motor drive board using AS5048A 14-bit magnetic encoder feedback running a 10kHz control loop.",
+                        constraints: "Smooth torque ripple < 2%, zero perceivable haptic delay."
+                    },
+                    bom: [
+                        { part: "Gimbal BLDC Motor 2804", qty: 1, cost: "$16.00", supplier: "AliExpress" },
+                        { part: "AS5048A 14-Bit Magnetic Encoder", qty: 1, cost: "$6.50", supplier: "DigiKey" },
+                        { part: "Custom 2-Layer PCB Board", qty: 1, cost: "$4.00", supplier: "JLCPCB" },
+                        { part: "CNC Machined Aluminum Knob", qty: 1, cost: "$14.00", supplier: "Custom" }
+                    ],
+                    metricsData: {
+                        labels: ['Detent Mode', 'Spring Bounce', 'Friction Mode', 'Hard Wall Stop'],
+                        datasets: [{
+                            label: 'Torque Command Response (mN·m)',
+                            data: [12, 28, 15, 45],
+                            borderColor: '#A39EE0',
+                            backgroundColor: 'rgba(226, 224, 244, 0.4)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    codeSnippet: `// Field Oriented Control Torque Loop for Haptic Detents
+void updateHapticTorque(float currentAngle) {
+    float targetDetent = roundf(currentAngle / DETENT_STEP) * DETENT_STEP;
+    float error = targetDetent - currentAngle;
+    
+    // Virtual Spring-Damper torque simulation
+    float springTorque = K_SPRING * error;
+    float dampingTorque = -B_DAMPING * currentVelocity;
+    
+    float totalTorque = springTorque + dampingTorque;
+    setMotorCurrentQ(totalTorque);
+}`,
+                    fmea: [
+                        { failure: "Magnetic encoder alignment slip", severity: "High", mitigation: "Designed D-shaft keyway alignment feature on encoder magnet holder." }
+                    ]
+                },
+                {
+                    id: "smart-hydroponics",
+                    title: "Automated Nutrient Dosing System for Urban Hydroponics",
+                    category: "Embedded Systems",
+                    subCategory: "Sensors & Fluidics",
+                    tags: ["ESP32", "Peristaltic Pumps", "pH Sensor", "EC Probe", "C++", "MQTT"],
+                    metricBadge: "Yield Up: +34%",
+                    metricValue: "+34%",
+                    thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
+                    summary: "Designed a precise closed-loop liquid nutrient dosing rig featuring micro-peristaltic pumps and self-calibrating pH/EC sensor manifolds.",
+                    overview: {
+                        problem: "Manual nutrient dosing in hydroponics leads to pH spikes, root burn, and high water waste.",
+                        solution: "Developed an automated manifold with real-time feedback PID control to inject micronutrients with 0.1 mL precision.",
+                        constraints: "Total power < 12W, modular plug-and-play cartridge refill system."
+                    },
+                    bom: [
+                        { part: "12V Micro Peristaltic Pumps", qty: 4, cost: "$24.00", supplier: "Adafruit" },
+                        { part: "Industrial pH Signal Conditioning Board", qty: 1, cost: "$19.00", supplier: "DFRobot" },
+                        { part: "Food-Grade SLA Manifold Housing", qty: 1, cost: "$15.00", supplier: "Protolabs" }
+                    ],
+                    metricsData: {
+                        labels: ['Day 1', 'Day 3', 'Day 5', 'Day 7', 'Day 10', 'Day 14'],
+                        datasets: [{
+                            label: 'pH Level Stability Target (6.0)',
+                            data: [6.8, 6.1, 6.0, 5.9, 6.0, 6.0],
+                            borderColor: '#E3B778',
+                            backgroundColor: 'rgba(252, 232, 204, 0.4)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    codeSnippet: `// PID Controller for Micro-Pump Nutrient Dosing
+void adjustNutrientpH(float currentpH) {
+    float error = TARGET_PH - currentpH;
+    float pTerm = Kp * error;
+    
+    if (fabs(error) > 0.15) {
+        uint32_t pumpRunTimeMs = (uint32_t)(fabs(pTerm) * 1000.0);
+        digitalWrite(PUMP_PH_DOWN_PIN, HIGH);
+        delay(pumpRunTimeMs);
+        digitalWrite(PUMP_PH_DOWN_PIN, LOW);
+    }
+}`,
+                    fmea: [
+                        { failure: "Sensor drift over long water exposure", severity: "Medium", mitigation: "Automated daily clean-water flush cycle around probe glass electrode." }
+                    ]
+                }
+            ],
+            skills: [
+                {
+                    category: "CAD & Structural Design",
+                    icon: "fa-compass-drafting",
+                    colorClass: "bg-pastel-rose/40 text-pastel-roseText border-pastel-roseDeep/30",
+                    barColor: "bg-pastel-roseDeep",
+                    items: [
+                        { name: "SolidWorks (Complex Surfacing & Sheet Metal)", level: "Expert", percent: 95 },
+                        { name: "Fusion 360 & Generative Design", level: "Advanced", percent: 90 },
+                        { name: "Ansys Mechanical & Structural FEA", level: "Advanced", percent: 86 },
+                        { name: "GD&T (ASME Y14.5 Standards)", level: "Advanced", percent: 88 },
+                        { name: "Design for Additive Manufacturing (DFAM)", level: "Expert", percent: 92 }
+                    ]
+                },
+                {
+                    category: "Robotics & Embedded Systems",
+                    icon: "fa-microchip",
+                    colorClass: "bg-pastel-periwinkle/40 text-pastel-periwinkleText border-pastel-periwinkleDeep/30",
+                    barColor: "bg-pastel-periwinkleDeep",
+                    items: [
+                        { name: "C / C++ (Embedded Systems)", level: "Advanced", percent: 88 },
+                        { name: "KiCad PCB Schematic & Layout", level: "Intermediate", percent: 80 },
+                        { name: "STM32 & Microcontroller Architecture", level: "Advanced", percent: 85 },
+                        { name: "MATLAB & Simulink Controls", level: "Advanced", percent: 86 },
+                        { name: "ROS2 & Kinematic Motion Planning", level: "Intermediate", percent: 76 }
+                    ]
+                },
+                {
+                    category: "Prototyping & Fabrication",
+                    icon: "fa-hammer",
+                    colorClass: "bg-pastel-sage/40 text-pastel-sageText border-pastel-sageDeep/30",
+                    barColor: "bg-pastel-sageDeep",
+                    items: [
+                        { name: "SLA / FDM 3D Printing & Resin Casting", level: "Expert", percent: 96 },
+                        { name: "3-Axis CNC Milling & CAM Toolpaths", level: "Advanced", percent: 84 },
+                        { name: "Laser Cutting & Thermoforming", level: "Expert", percent: 90 },
+                        { name: "Carbon Fiber Vacuum Resin Infusion", level: "Advanced", percent: 82 },
+                        { name: "Oscilloscopes & Test Bench Setup", level: "Proficient", percent: 85 }
+                    ]
+                }
+            ],
+            experiences: [
+                {
+                    role: "Mechanical Hardware Engineering Intern",
+                    company: "Apple Inc.",
+                    location: "Cupertino, CA",
+                    period: "June 2025 - Sept 2025",
+                    type: "Internship",
+                    color: "rose",
+                    achievements: [
+                        "Designed micro-machined aluminum internal frame brackets for next-gen wearable prototype.",
+                        "Conducted drop-test simulations and finite element strain analysis, leading to a 15% improvement in corner impact absorption.",
+                        "Collaborated with cross-functional reliability and thermal teams to validate thermal pad compression."
+                    ]
+                },
+                {
+                    role: "Aerodynamics & Composite Lead",
+                    company: "Stanford Solar Car Project",
+                    location: "Stanford, CA",
+                    period: "Sept 2023 - Present",
+                    type: "Design Team",
+                    color: "sage",
+                    achievements: [
+                        "Managed a 10-person team designing the carbon-fiber monocoque and outer canopy shell.",
+                        "Ran over 180 CFD iterations in Ansys Fluent, reducing overall aerodynamic drag coefficient from 0.145 to 0.114.",
+                        "Oversaw wet layup and resin vacuum infusion process during 4-week build cycle."
+                    ]
+                },
+                {
+                    role: "Undergraduate Mechanical Researcher",
+                    company: "Stanford CHARM Lab (Haptics)",
+                    location: "Stanford, CA",
+                    period: "Jan 2024 - May 2025",
+                    type: "Research",
+                    color: "periwinkle",
+                    achievements: [
+                        "Built low-friction mechanical tendon routing for soft robotic medical feedback devices.",
+                        "Co-authored research paper on soft tactile actuators presented at IEEE Haptics Symposium 2025."
+                    ]
+                }
+            ]
+        };
+
+        const SpringMassDamperVisualizer = () => {
+            const [damping, setDamping] = useState(0.12);
+            const [stiffness, setStiffness] = useState(1.8);
+            const [mass, setMass] = useState(1.0);
+            const [isRunning, setIsRunning] = useState(true);
+
+            const canvasRef = useRef(null);
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let animationFrameId;
+
+                let width = canvas.width = canvas.parentElement.clientWidth;
+                let height = canvas.height = canvas.parentElement.clientHeight;
+
+                const handleResize = () => {
+                    if (!canvas || !canvas.parentElement) return;
+                    width = canvas.width = canvas.parentElement.clientWidth;
+                    height = canvas.height = canvas.parentElement.clientHeight;
+                };
+
+                window.addEventListener('resize', handleResize);
+
+                // Simulation variables
+                let pos = 70; // initial displacement
+                let vel = 0;
+                let timeHistory = [];
+                const maxHistory = 180;
+
+                const animate = () => {
+                    if (isRunning) {
+                        // Physics equation: m*a + c*v + k*x = 0
+                        const forceSpring = -stiffness * pos;
+                        const forceDamping = -damping * vel;
+                        const accel = (forceSpring + forceDamping) / mass;
+
+                        vel += accel * 0.4;
+                        pos += vel * 0.4;
+
+                        timeHistory.push(pos);
+                        if (timeHistory.length > maxHistory) timeHistory.shift();
+                    }
+
+                    ctx.clearRect(0, 0, width, height);
+
+                    // Soft background grid
+                    ctx.strokeStyle = '#E2E0F4';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 4]);
+
+                    const centerY = height / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, centerY);
+                    ctx.lineTo(width, centerY);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Render Spring & Mass on left side
+                    const originX = 60;
+                    const massX = originX + pos;
+
+                    // Wall
+                    ctx.fillStyle = '#98B6A2';
+                    ctx.fillRect(15, centerY - 45, 12, 90);
+
+                    // Spring coils
+                    ctx.strokeStyle = '#E0A99E';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.moveTo(27, centerY);
+                    const coils = 10;
+                    const springLen = massX - 27;
+                    for (let i = 0; i <= coils; i++) {
+                        const x = 27 + (springLen / coils) * i;
+                        const y = centerY + (i % 2 === 0 ? -16 : 16) * (i === 0 || i === coils ? 0 : 1);
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+
+                    // Mass block
+                    ctx.fillStyle = '#FAF8F5';
+                    ctx.strokeStyle = '#2D3139';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(massX, centerY - 24, 48, 48, 12);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Label on mass
+                    ctx.fillStyle = '#2D3139';
+                    ctx.font = '600 11px Plus Jakarta Sans';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('m', massX + 24, centerY + 4);
+
+                    // Draw Oscillating Wave Trace on right side
+                    const graphStartX = 180;
+                    const graphWidth = width - graphStartX - 20;
+
+                    if (timeHistory.length > 1 && graphWidth > 50) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#A39EE0';
+                        ctx.lineWidth = 3;
+                        ctx.lineCap = 'round';
+
+                        for (let i = 0; i < timeHistory.length; i++) {
+                            const x = graphStartX + (i / maxHistory) * graphWidth;
+                            const y = centerY - timeHistory[i] * 0.8;
+                            if (i === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+
+                        // Soft pastel shadow fill under curve
+                        ctx.lineTo(graphStartX + ((timeHistory.length - 1) / maxHistory) * graphWidth, centerY);
+                        ctx.lineTo(graphStartX, centerY);
+                        ctx.fillStyle = 'rgba(226, 224, 244, 0.3)';
+                        ctx.fill();
+                    }
+
+                    animationFrameId = requestAnimationFrame(animate);
+                };
+
+                animate();
+
+                return () => {
+                    cancelAnimationFrame(animationFrameId);
+                    window.removeEventListener('resize', handleResize);
+                };
+            }, [damping, stiffness, mass, isRunning]);
+
+            return (
+                <div className="glass-card rounded-3xl p-6 shadow-pastel-md border border-pastel-periwinkle/50 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-pastel-periwinkle/40 pb-3">
+                        <div className="flex items-center gap-2">
+                            <span className="w-8 h-8 rounded-xl bg-pastel-periwinkle/60 text-pastel-periwinkleText flex items-center justify-center text-sm font-bold">
+                                <i className="fa-solid fa-wave-square"></i>
+                            </span>
+                            <div>
+                                <h3 className="font-bold text-sm text-slate-800">Dynamic Spring-Mass-Damper Playground</h3>
+                                <p className="text-xs text-slate-500">Real-time differential equation response ($m\ddot x + c\dot x + kx = 0$)</p>
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={() => setIsRunning(!isRunning)}
+                            className="px-3.5 py-1.5 rounded-full bg-pastel-sage/50 hover:bg-pastel-sage text-pastel-sageText font-mono text-xs font-semibold transition-colors flex items-center gap-1.5"
+                        >
+                            <i className={`fa-solid ${isRunning ? 'fa-pause' : 'fa-play'}`}></i>
+                            {isRunning ? 'Pause Physics' : 'Resume'}
+                        </button>
+                    </div>
+
+                    {/* Canvas Area */}
+                    <div className="h-44 w-full bg-canvas/80 rounded-2xl border border-pastel-periwinkle/40 relative overflow-hidden">
+                        <canvas ref={canvasRef} className="w-full h-full block" />
+                    </div>
+
+                    {/* Interactive Slider Controls */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1 font-mono text-xs">
+                        <div className="bg-white/70 p-3 rounded-xl border border-slate-100">
+                            <div className="flex justify-between text-slate-600 mb-1">
+                                <span>DAMPING (c)</span>
+                                <span className="text-pastel-roseText font-bold">{damping.toFixed(2)}</span>
+                            </div>
+                            <input 
+                                type="range" min="0.02" max="0.5" step="0.02" 
+                                value={damping} onChange={(e) => setDamping(parseFloat(e.target.value))}
+                                className="w-full accent-pastel-roseDeep h-1.5 bg-pastel-rose/40 rounded-lg appearance-none cursor-pointer"
+                            />
+                        </div>
+
+                        <div className="bg-white/70 p-3 rounded-xl border border-slate-100">
+                            <div className="flex justify-between text-slate-600 mb-1">
+                                <span>STIFFNESS (k)</span>
+                                <span className="text-pastel-sageText font-bold">{stiffness.toFixed(1)}</span>
+                            </div>
+                            <input 
+                                type="range" min="0.5" max="5.0" step="0.2" 
+                                value={stiffness} onChange={(e) => setStiffness(parseFloat(e.target.value))}
+                                className="w-full accent-pastel-sageDeep h-1.5 bg-pastel-sage/40 rounded-lg appearance-none cursor-pointer"
+                            />
+                        </div>
+
+                        <div className="bg-white/70 p-3 rounded-xl border border-slate-100">
+                            <div className="flex justify-between text-slate-600 mb-1">
+                                <span>MASS (m)</span>
+                                <span className="text-pastel-periwinkleText font-bold">{mass.toFixed(1)} kg</span>
+                            </div>
+                            <input 
+                                type="range" min="0.5" max="3.0" step="0.1" 
+                                value={mass} onChange={(e) => setMass(parseFloat(e.target.value))}
+                                className="w-full accent-pastel-periwinkleDeep h-1.5 bg-pastel-periwinkle/40 rounded-lg appearance-none cursor-pointer"
+                            />
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const BeamCalculatorWidget = () => {
+            const [material, setMaterial] = useState('alu6061');
+            const [lengthM, setLengthM] = useState(2.0);
+            const [loadN, setLoadN] = useState(1500);
+            const [loadPosM, setLoadPosM] = useState(1.0);
+            const [section, setSection] = useState('rect');
+            
+            const [heightMM, setHeightMM] = useState(50);
+            const [widthMM, setWidthMM] = useState(30);
+
+            const MATERIALS = {
+                alu6061: { name: 'Aluminum 6061-T6', E: 68.9e9, yield: 276e6, color: '#E0A99E' },
+                steel304: { name: 'Stainless Steel 304', E: 193e9, yield: 215e6, color: '#A39EE0' },
+                titanium: { name: 'Titanium Ti-6Al-4V', E: 114e9, yield: 880e6, color: '#E3B778' },
+                wood: { name: 'Birch Plywood', E: 12e9, yield: 40e6, color: '#98B6A2' }
+            };
+
+            const mat = MATERIALS[material];
+
+            const calculations = useMemo(() => {
+                const b = widthMM / 1000;
+                const h = heightMM / 1000;
+                let I = (b * Math.pow(h, 3)) / 12; // Moment of Inertia
+                let yMax = h / 2;
+
+                const L = parseFloat(lengthM);
+                const P = parseFloat(loadN);
+                const a = Math.min(parseFloat(loadPosM), L - 0.01);
+                const bDist = L - a;
+
+                // Reactions
+                const R1 = (P * bDist) / L;
+                const R2 = (P * a) / L;
+
+                // Max Bending Moment
+                const M_max = R1 * a;
+
+                // Max Bending Stress
+                const sigma_max = (M_max * yMax) / I;
+
+                // Deflection
+                const delta_max_mm = ((P * Math.pow(a, 2) * Math.pow(bDist, 2)) / (3 * mat.E * I * L)) * 1000;
+
+                // Safety Factor
+                const safetyFactor = mat.yield / sigma_max;
+
+                return { R1, R2, M_max, sigma_max_MPa: sigma_max / 1e6, delta_max_mm, safetyFactor };
+            }, [material, lengthM, loadN, loadPosM, section, heightMM, widthMM]);
+
+            return (
+                <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-pastel-md border border-pastel-sage/50 space-y-6">
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-pastel-sage/30 pb-4">
+                        <div>
+                            <span className="px-3 py-1 bg-pastel-sage/50 text-pastel-sageText font-mono text-xs font-bold rounded-full">
+                                <i className="fa-solid fa-calculator mr-1"></i> Interactive Mechanics
+                            </span>
+                            <h3 className="text-xl font-bold text-slate-800 mt-2">Pastel Beam Stress & Deflection Calculator</h3>
+                            <p className="text-xs text-slate-500">Calculate simply-supported beam bending, live SFD/BMD diagrams, and safety factors.</p>
+                        </div>
+
+                        <div className={`px-4 py-2 rounded-2xl border text-xs font-mono font-bold flex items-center gap-2 ${calculations.safetyFactor >= 2.0 ? 'bg-pastel-mint border-pastel-sageDeep text-pastel-sageText' : 'bg-pastel-blush border-pastel-roseDeep text-pastel-roseText'}`}>
+                            <i className="fa-solid fa-shield-halved"></i>
+                            <span>Safety Factor: {calculations.safetyFactor.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Parameters Column */}
+                        <div className="lg:col-span-5 space-y-4 bg-canvas/70 p-5 rounded-2xl border border-pastel-sage/30 font-mono text-xs">
+                            <h4 className="font-bold text-slate-700 flex items-center gap-2">
+                                <i className="fa-solid fa-sliders text-pastel-sageText"></i> MATERIAL & GEOMETRY
+                            </h4>
+
+                            <div>
+                                <label className="block text-slate-500 mb-1">MATERIAL SELECTION</label>
+                                <select 
+                                    value={material} onChange={(e) => setMaterial(e.target.value)}
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-pastel-sageDeep"
+                                >
+                                    {Object.entries(MATERIALS).map(([key, item]) => (
+                                        <option key={key} value={key}>{item.name} (Yield: {item.yield / 1e6} MPa)</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between text-slate-600 mb-1">
+                                    <span>BEAM LENGTH (L)</span>
+                                    <span className="font-bold text-slate-800">{lengthM} m</span>
+                                </div>
+                                <input 
+                                    type="range" min="0.5" max="4.0" step="0.1"
+                                    value={lengthM} onChange={(e) => setLengthM(e.target.value)}
+                                    className="w-full accent-pastel-sageDeep h-1.5 bg-pastel-sage/30 rounded-lg appearance-none cursor-pointer"
+                                />
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between text-slate-600 mb-1">
+                                    <span>POINT LOAD (F)</span>
+                                    <span className="font-bold text-slate-800">{loadN} N ({Math.round(loadN/9.81)} kg)</span>
+                                </div>
+                                <input 
+                                    type="range" min="100" max="10000" step="100"
+                                    value={loadN} onChange={(e) => setLoadN(e.target.value)}
+                                    className="w-full accent-pastel-sageDeep h-1.5 bg-pastel-sage/30 rounded-lg appearance-none cursor-pointer"
+                                />
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between text-slate-600 mb-1">
+                                    <span>LOAD POSITION (a)</span>
+                                    <span className="font-bold text-slate-800">{loadPosM} m</span>
+                                </div>
+                                <input 
+                                    type="range" min="0.1" max={lengthM} step="0.1"
+                                    value={loadPosM} onChange={(e) => setLoadPosM(e.target.value)}
+                                    className="w-full accent-pastel-sageDeep h-1.5 bg-pastel-sage/30 rounded-lg appearance-none cursor-pointer"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 pt-2">
+                                <div>
+                                    <label className="block text-slate-500 mb-1">HEIGHT (mm)</label>
+                                    <input 
+                                        type="number" value={heightMM} onChange={(e) => setHeightMM(Math.max(5, e.target.value))}
+                                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-slate-800"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-slate-500 mb-1">WIDTH (mm)</label>
+                                    <input 
+                                        type="number" value={widthMM} onChange={(e) => setWidthMM(Math.max(5, e.target.value))}
+                                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-slate-800"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Visualizer Column */}
+                        <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+                            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-pastel-sm relative">
+                                <div className="flex justify-between items-center text-xs font-mono text-slate-400 mb-3">
+                                    <span>BEAM DEFLECTION & LOAD MODEL</span>
+                                    <span>Scale exaggerated</span>
+                                </div>
+
+                                <svg viewBox="0 0 500 180" className="w-full h-auto overflow-visible">
+                                    {/* Centerline */}
+                                    <line x1="40" y1="80" x2="460" y2="80" stroke="#E2E0F4" strokeDasharray="3 3" strokeWidth="1" />
+                                    
+                                    {/* Neutral Beam */}
+                                    <rect x="40" y="76" width="420" height="8" fill="#F1F3F7" rx="3" />
+
+                                    {/* Bending Curve */}
+                                    {(() => {
+                                        const loadRatio = loadPosM / lengthM;
+                                        const loadX = 40 + loadRatio * 420;
+                                        const defVal = Math.min(Math.max(calculations.delta_max_mm * 5, 2), 35);
+                                        return (
+                                            <path 
+                                                d={`M 40 80 Q ${loadX} ${80 + defVal * 1.6} 460 80`}
+                                                fill="none" stroke={mat.color} strokeWidth="5" strokeLinecap="round"
+                                            />
+                                        );
+                                    })()}
+
+                                    {/* Supports */}
+                                    <polygon points="40,84 32,100 48,100" fill="#98B6A2" />
+                                    <polygon points="460,84 452,100 468,100" fill="#98B6A2" />
+
+                                    {/* Force Arrow */}
+                                    {(() => {
+                                        const loadX = 40 + (loadPosM / lengthM) * 420;
+                                        return (
+                                            <g>
+                                                <line x1={loadX} y1="20" x2={loadX} y2="72" stroke="#E0A99E" strokeWidth="3" />
+                                                <polygon points={`${loadX},76 ${loadX-5},66 ${loadX+5},66`} fill="#E0A99E" />
+                                                <text x={loadX} y="14" fill="#8C483B" textAnchor="middle" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold">
+                                                    F = {loadN} N
+                                                </text>
+                                            </g>
+                                        );
+                                    })()}
+
+                                    {/* Reactions */}
+                                    <text x="40" y="118" fill="#3B6149" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono">
+                                        R1 = {Math.round(calculations.R1)}N
+                                    </text>
+                                    <text x="460" y="118" fill="#3B6149" textAnchor="middle" fontSize="9" fontFamily="JetBrains Mono">
+                                        R2 = {Math.round(calculations.R2)}N
+                                    </text>
+                                </svg>
+                            </div>
+
+                            {/* Stat Output Cards */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono">
+                                <div className="bg-pastel-blush/60 p-3.5 rounded-2xl border border-pastel-rose/50">
+                                    <span className="text-[10px] text-pastel-roseText block">MAX DEFLECTION</span>
+                                    <span className="text-lg font-bold text-slate-800">{calculations.delta_max_mm.toFixed(2)} <span className="text-xs">mm</span></span>
+                                </div>
+                                <div className="bg-pastel-mint/60 p-3.5 rounded-2xl border border-pastel-sage/50">
+                                    <span className="text-[10px] text-pastel-sageText block">BENDING STRESS</span>
+                                    <span className="text-lg font-bold text-slate-800">{calculations.sigma_max_MPa.toFixed(1)} <span className="text-xs">MPa</span></span>
+                                </div>
+                                <div className="col-span-2 sm:col-span-1 bg-pastel-periwinkle/40 p-3.5 rounded-2xl border border-pastel-periwinkle/60">
+                                    <span className="text-[10px] text-pastel-periwinkleText block">MAX MOMENT</span>
+                                    <span className="text-lg font-bold text-slate-800">{Math.round(calculations.M_max)} <span className="text-xs">N·m</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ProjectDeepDiveModal = ({ project, onClose }) => {
+            const [activeTab, setActiveTab] = useState('overview');
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            useEffect(() => {
+                if (activeTab === 'metrics' && chartRef.current && project.metricsData) {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+
+                    const ctx = chartRef.current.getContext('2d');
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: project.metricsData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#2D3139', font: { family: 'Plus Jakarta Sans' } }
+                                }
+                            },
+                            scales: {
+                                x: { ticks: { color: '#6C768A' }, grid: { color: '#F1F3F7' } },
+                                y: { ticks: { color: '#6C768A' }, grid: { color: '#F1F3F7' } }
+                            }
+                        }
+                    });
+                }
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [activeTab, project]);
+
+            if (!project) return null;
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md overflow-y-auto">
+                    <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-pastel-lg overflow-hidden my-auto">
+                        
+                        {/* Header */}
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-start bg-canvas/80">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="px-3 py-0.5 bg-pastel-rose/50 text-pastel-roseText text-xs font-mono font-bold rounded-full">
+                                        {project.category}
+                                    </span>
+                                    <span className="px-3 py-0.5 bg-pastel-sage/50 text-pastel-sageText text-xs font-mono rounded-full">
+                                        {project.subCategory}
+                                    </span>
+                                </div>
+                                <h2 className="text-2xl font-bold text-slate-800">{project.title}</h2>
+                            </div>
+                            <button 
+                                onClick={onClose}
+                                className="w-9 h-9 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors flex items-center justify-center"
+                            >
+                                <i className="fa-solid fa-xmark text-base"></i>
+                            </button>
+                        </div>
+
+                        {/* Navigation Tabs */}
+                        <div className="flex border-b border-slate-100 bg-white px-6 gap-6 font-mono text-xs overflow-x-auto">
+                            {[
+                                { id: 'overview', label: 'Overview & Problem', icon: 'fa-file-lines' },
+                                { id: 'bom', label: 'Bill of Materials (BOM)', icon: 'fa-layer-group' },
+                                { id: 'metrics', label: 'FEA & Telemetry Plot', icon: 'fa-chart-area' },
+                                { id: 'code', label: 'Code & Firmware', icon: 'fa-code' },
+                                { id: 'fmea', label: 'Validation & FMEA', icon: 'fa-shield-halved' }
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`py-3.5 border-b-2 font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${activeTab === tab.id ? 'border-pastel-roseDeep text-pastel-roseText' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+                                >
+                                    <i className={`fa-solid ${tab.icon}`}></i>
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Modal Body Content */}
+                        <div className="p-6 overflow-y-auto flex-1 space-y-6">
+                            
+                            {/* OVERVIEW TAB */}
+                            {activeTab === 'overview' && (
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="bg-pastel-blush/60 p-4 rounded-2xl border border-pastel-rose/50">
+                                            <h4 className="text-xs font-mono text-pastel-roseText uppercase mb-1">
+                                                <i className="fa-solid fa-triangle-exclamation mr-1"></i> Problem
+                                            </h4>
+                                            <p className="text-xs text-slate-700 leading-relaxed">{project.overview.problem}</p>
+                                        </div>
+                                        <div className="bg-pastel-mint/60 p-4 rounded-2xl border border-pastel-sage/50">
+                                            <h4 className="text-xs font-mono text-pastel-sageText uppercase mb-1">
+                                                <i className="fa-solid fa-lightbulb mr-1"></i> Solution
+                                            </h4>
+                                            <p className="text-xs text-slate-700 leading-relaxed">{project.overview.solution}</p>
+                                        </div>
+                                        <div className="bg-pastel-periwinkle/40 p-4 rounded-2xl border border-pastel-periwinkle/60">
+                                            <h4 className="text-xs font-mono text-pastel-periwinkleText uppercase mb-1">
+                                                <i className="fa-solid fa-compass-drafting mr-1"></i> Constraints
+                                            </h4>
+                                            <p className="text-xs text-slate-700 leading-relaxed">{project.overview.constraints}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-canvas p-5 rounded-2xl border border-slate-100">
+                                        <h3 className="text-xs font-bold font-mono text-slate-500 uppercase mb-2">Technical Narrative</h3>
+                                        <p className="text-sm text-slate-700 leading-relaxed">{project.summary}</p>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-xs font-bold font-mono text-slate-500 uppercase mb-2">Tools & Skills Applied</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {project.tags.map(tag => (
+                                                <span key={tag} className="px-3 py-1 bg-white text-slate-700 text-xs font-mono rounded-xl border border-slate-200 shadow-pastel-sm">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* BOM TAB */}
+                            {activeTab === 'bom' && (
+                                <div className="space-y-4">
+                                    <h3 className="text-xs font-bold font-mono text-slate-500 uppercase">Component & Hardware BOM</h3>
+                                    <div className="overflow-x-auto border border-slate-100 rounded-2xl">
+                                        <table className="w-full text-left text-xs font-mono">
+                                            <thead className="bg-canvas text-slate-500 border-b border-slate-100">
+                                                <tr>
+                                                    <th className="p-3">PART DESCRIPTION</th>
+                                                    <th className="p-3">QTY</th>
+                                                    <th className="p-3">UNIT COST</th>
+                                                    <th className="p-3">SUPPLIER</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100 text-slate-700">
+                                                {project.bom ? project.bom.map((item, idx) => (
+                                                    <tr key={idx} className="hover:bg-slate-50">
+                                                        <td className="p-3 font-semibold text-slate-800">{item.part}</td>
+                                                        <td className="p-3">{item.qty}</td>
+                                                        <td className="p-3 text-pastel-roseText font-bold">{item.cost}</td>
+                                                        <td className="p-3 text-slate-500">{item.supplier}</td>
+                                                    </tr>
+                                                )) : (
+                                                    <tr>
+                                                        <td colSpan="4" className="p-4 text-center text-slate-400">No BOM recorded.</td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* METRICS & FEA TAB */}
+                            {activeTab === 'metrics' && (
+                                <div className="space-y-4">
+                                    <h3 className="text-xs font-bold font-mono text-slate-500 uppercase">Performance Metrics & Stress Simulation</h3>
+                                    <div className="h-64 bg-canvas p-4 rounded-2xl border border-slate-100 relative">
+                                        <canvas ref={chartRef}></canvas>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* CODE TAB */}
+                            {activeTab === 'code' && (
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-xs font-bold font-mono text-slate-500 uppercase">Embedded Script / APDL Code</h3>
+                                        <button 
+                                            onClick={() => navigator.clipboard.writeText(project.codeSnippet)}
+                                            className="text-xs font-mono text-pastel-roseText hover:underline flex items-center gap-1"
+                                        >
+                                            <i className="fa-regular fa-copy"></i> Copy Snippet
+                                        </button>
+                                    </div>
+                                    <div className="bg-slate-900 p-4 rounded-2xl font-mono text-xs text-pastel-sage overflow-x-auto max-h-80">
+                                        <pre><code>{project.codeSnippet || "// No code snippet provided."}</code></pre>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* FMEA TAB */}
+                            {activeTab === 'fmea' && (
+                                <div className="space-y-4">
+                                    <h3 className="text-xs font-bold font-mono text-slate-500 uppercase">FMEA Risk Analysis</h3>
+                                    <div className="space-y-3">
+                                        {project.fmea ? project.fmea.map((item, idx) => (
+                                            <div key={idx} className="bg-canvas p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                                <div>
+                                                    <span className="text-[10px] font-mono text-pastel-roseText font-bold block">POSSIBLE FAILURE</span>
+                                                    <p className="text-xs text-slate-800 font-medium">{item.failure}</p>
+                                                </div>
+                                                <div className="md:w-1/2">
+                                                    <span className="text-[10px] font-mono text-pastel-sageText font-bold block">DESIGN MITIGATION</span>
+                                                    <p className="text-xs text-slate-600">{item.mitigation}</p>
+                                                </div>
+                                                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono bg-pastel-butter text-pastel-butterText self-start md:self-center">
+                                                    {item.severity} Risk
+                                                </span>
+                                            </div>
+                                        )) : (
+                                            <p className="text-slate-400 text-xs font-mono">No FMEA entry.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-4 border-t border-slate-100 bg-canvas/80 flex justify-between items-center text-xs font-mono">
+                            <span className="text-slate-500">Highlight Metric: <strong className="text-slate-800">{project.metricBadge}</strong></span>
+                            <button 
+                                onClick={onClose}
+                                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors"
+                            >
+                                Close Details
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            );
+        };
+
+        const CustomizerModal = ({ isOpen, onClose, portfolioData, onSave }) => {
+            const [jsonText, setJsonText] = useState('');
+            const [error, setError] = useState(null);
+
+            useEffect(() => {
+                setJsonText(JSON.stringify(portfolioData, null, 2));
+            }, [portfolioData, isOpen]);
+
+            if (!isOpen) return null;
+
+            const handleSave = () => {
+                try {
+                    const parsed = JSON.parse(jsonText);
+                    onSave(parsed);
+                    setError(null);
+                    onClose();
+                } catch (err) {
+                    setError('Invalid JSON: ' + err.message);
+                }
+            };
+
+            const handleExport = () => {
+                const blob = new Blob([jsonText], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${portfolioData.profile.name.replace(/\s+/g, '_')}_Portfolio.json`;
+                a.click();
+            };
+
+            const handleImport = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    setJsonText(evt.target.result);
+                };
+                reader.readAsText(file);
+            };
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+                    <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-3xl h-[85vh] flex flex-col shadow-pastel-lg">
+                        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-canvas">
+                            <div className="flex items-center gap-2">
+                                <i className="fa-solid fa-pen-to-square text-pastel-roseText"></i>
+                                <h3 className="text-base font-bold text-slate-800 font-mono">Live Portfolio Customizer</h3>
+                            </div>
+                            <button onClick={onClose} className="text-slate-400 hover:text-slate-700">
+                                <i className="fa-solid fa-xmark text-lg"></i>
+                            </button>
+                        </div>
+
+                        <div className="p-4 bg-white border-b border-slate-100 flex justify-between items-center text-xs font-mono">
+                            <span className="text-slate-500">Edit JSON content live to adapt name, projects, and skills.</span>
+                            <div className="flex gap-2">
+                                <label className="px-3 py-1.5 bg-canvas hover:bg-slate-100 text-slate-700 rounded-xl cursor-pointer border border-slate-200">
+                                    <i className="fa-solid fa-file-import mr-1"></i> Import
+                                    <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+                                </label>
+                                <button onClick={handleExport} className="px-3 py-1.5 bg-canvas hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200">
+                                    <i className="fa-solid fa-file-export mr-1"></i> Export
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-4 flex-1 bg-slate-900 relative">
+                            {error && (
+                                <div className="mb-3 p-3 bg-rose-500/20 text-rose-300 rounded-xl text-xs font-mono">
+                                    {error}
+                                </div>
+                            )}
+                            <textarea 
+                                value={jsonText}
+                                onChange={(e) => setJsonText(e.target.value)}
+                                className="w-full h-full bg-transparent text-pastel-sage font-mono text-xs focus:outline-none resize-none leading-relaxed"
+                            />
+                        </div>
+
+                        <div className="p-4 border-t border-slate-100 bg-canvas flex justify-end gap-3">
+                            <button onClick={onClose} className="px-4 py-2 bg-white text-slate-600 text-xs font-mono rounded-xl border border-slate-200">
+                                Cancel
+                            </button>
+                            <button onClick={handleSave} className="px-5 py-2 bg-slate-800 text-white font-bold text-xs font-mono rounded-xl hover:bg-slate-900 transition-colors">
+                                Apply & Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [portfolio, setPortfolio] = useState(() => {
+                const saved = localStorage.getItem('pastel_engineering_portfolio');
+                return saved ? JSON.parse(saved) : INITIAL_PORTFOLIO_DATA;
+            });
+
+            const [selectedCategory, setSelectedCategory] = useState('All');
+            const [searchQuery, setSearchQuery] = useState('');
+            const [activeProject, setActiveProject] = useState(null);
+            const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+
+            // Recruiter Quick Outreach Note
+            const [recruiterName, setRecruiterName] = useState('');
+            const [recruiterCompany, setRecruiterCompany] = useState('');
+            const [recruiterRole, setRecruiterRole] = useState('Product Design / Mechanical Hardware Engineer');
+            const [outreachNote, setOutreachNote] = useState('');
+
+            const handleSavePortfolio = (newData) => {
+                setPortfolio(newData);
+                localStorage.setItem('pastel_engineering_portfolio', JSON.stringify(newData));
+            };
+
+            const filteredProjects = useMemo(() => {
+                return portfolio.projects.filter(p => {
+                    const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory || p.subCategory === selectedCategory;
+                    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                          p.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                          p.summary.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                });
+            }, [portfolio.projects, selectedCategory, searchQuery]);
+
+            useEffect(() => {
+                const nameStr = recruiterName || '[Hiring Manager]';
+                const compStr = recruiterCompany || '[Company]';
+                setOutreachNote(`Hello ${portfolio.profile.name},\n\nI reviewed your engineering portfolio and was particularly drawn to your work on ${portfolio.projects[0]?.title || 'compliant mechanical hardware'}. We have an open ${recruiterRole} role at ${compStr} that aligns seamlessly with your experience.\n\nWould you be open to a quick 15-minute introductory call next week?\n\nWarm regards,\n${nameStr}\n${compStr}`);
+            }, [recruiterName, recruiterCompany, recruiterRole, portfolio]);
+
+            return (
+                <div className="min-h-screen bg-canvas text-slate-800 flex flex-col relative selection:bg-pastel-rose">
+                    
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-40 bg-canvas/80 backdrop-blur-md border-b border-slate-200/60">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-2xl bg-pastel-rose text-pastel-roseText font-mono font-bold flex items-center justify-center text-sm shadow-pastel-sm">
+                                    {portfolio.profile.name.split(' ').map(n=>n[0]).join('')}
+                                </div>
+                                <div>
+                                    <a href="#" className="font-bold text-sm text-slate-800 tracking-tight">
+                                        {portfolio.profile.name}
+                                    </a>
+                                    <span className="block text-[10px] font-mono text-pastel-roseText">PORTFOLIO // 2026</span>
+                                </div>
+                            </div>
+
+                            {/* Nav Links */}
+                            <div className="hidden md:flex items-center gap-6 text-xs font-mono text-slate-600">
+                                <a href="#projects" className="hover:text-pastel-roseText transition-colors">Projects</a>
+                                <a href="#playground" className="hover:text-pastel-sageText transition-colors">Playground</a>
+                                <a href="#skills" className="hover:text-pastel-periwinkleText transition-colors">Skills</a>
+                                <a href="#experience" className="hover:text-pastel-butterText transition-colors">Experience</a>
+                                <a href="#contact" className="hover:text-pastel-roseText transition-colors">Contact</a>
+                            </div>
+
+                            {/* Header Actions */}
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={() => setIsCustomizerOpen(true)}
+                                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-xs font-mono text-slate-700 border border-slate-200 shadow-pastel-sm transition-all flex items-center gap-1.5"
+                                >
+                                    <i className="fa-solid fa-pen-to-square text-pastel-roseText"></i>
+                                    <span className="hidden sm:inline">Customize</span>
+                                </button>
+                                <a 
+                                    href="#contact"
+                                    className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-mono font-semibold transition-all shadow-pastel-sm"
+                                >
+                                    Get in Touch
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* HERO SECTION */}
+                    <header className="relative py-16 sm:py-24 border-b border-slate-200/60 bg-pastel-grid overflow-hidden">
+                        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                            
+                            <div className="max-w-3xl space-y-6">
+                                {/* Soft Pastel Badge */}
+                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pastel-blush border border-pastel-rose/50 text-pastel-roseText text-xs font-mono shadow-pastel-sm">
+                                    <span className="w-2 h-2 rounded-full bg-pastel-roseDeep animate-pulse"></span>
+                                    <span>{portfolio.profile.status}</span>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-800">
+                                        Hi, I'm <span className="serif-italic font-normal text-pastel-roseText">{portfolio.profile.name}</span>
+                                    </h1>
+                                    <p className="text-xl sm:text-2xl font-mono text-slate-600 font-medium">
+                                        {portfolio.profile.title}
+                                    </p>
+                                    <p className="text-xs font-mono text-slate-500">
+                                        <i className="fa-solid fa-graduation-cap mr-1 text-pastel-sageText"></i> {portfolio.profile.university} • Graduating {portfolio.profile.gradYear}
+                                    </p>
+                                </div>
+
+                                <p className="text-base text-slate-600 leading-relaxed max-w-2xl">
+                                    {portfolio.profile.tagline}
+                                </p>
+
+                                {/* Action Buttons */}
+                                <div className="flex flex-wrap items-center gap-3 pt-2">
+                                    <a 
+                                        href="#projects" 
+                                        className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-mono text-xs font-semibold shadow-pastel-md transition-all flex items-center gap-2"
+                                    >
+                                        <i className="fa-solid fa-compass-drafting"></i> Explore Case Studies
+                                    </a>
+                                    <a 
+                                        href="#playground" 
+                                        className="px-6 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-mono text-xs border border-slate-200 shadow-pastel-sm transition-all flex items-center gap-2"
+                                    >
+                                        <i className="fa-solid fa-calculator text-pastel-sageText"></i> Mechanics Simulator
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Physics Oscillating Wave Playground */}
+                            <SpringMassDamperVisualizer />
+
+                            {/* Stats Cards */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                                {portfolio.profile.stats.map((stat, idx) => (
+                                    <div key={idx} className="bg-white/80 backdrop-blur-md border border-slate-200/80 p-4 rounded-2xl text-center shadow-pastel-sm hover:shadow-pastel-md transition-all">
+                                        <i className={`fa-solid ${stat.icon} text-pastel-roseText text-lg mb-2 block`}></i>
+                                        <div className="text-2xl font-bold font-mono text-slate-800">{stat.value}</div>
+                                        <div className="text-[11px] font-mono text-slate-500 uppercase mt-0.5">{stat.label}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                        </div>
+                    </header>
+
+                    {/* MAIN CONTENT AREA */}
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-28 flex-1 w-full">
+
+                        {/* PROJECTS SHOWCASE */}
+                        <section id="projects" className="space-y-8">
+                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/60 pb-4">
+                                <div>
+                                    <span className="text-xs font-mono text-pastel-roseText uppercase tracking-wider mb-1 block">
+                                        <i className="fa-solid fa-cubes mr-1"></i> Engineering Portfolio
+                                    </span>
+                                    <h2 className="text-3xl font-bold text-slate-800">Featured Projects & Case Studies</h2>
+                                </div>
+
+                                {/* Search Bar */}
+                                <div className="relative w-full md:w-72">
+                                    <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                    <input 
+                                        type="text"
+                                        placeholder="Search tags, tools, or topics..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-9 pr-4 py-2 text-xs font-mono text-slate-700 focus:outline-none focus:border-pastel-roseDeep shadow-pastel-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Category Filter Pills */}
+                            <div className="flex items-center gap-2 overflow-x-auto pb-2 font-mono text-xs">
+                                {['All', 'Mechanical Design', 'Robotics & Control', 'Embedded Systems', 'Sustainability/Research'].map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        className={`px-4 py-2 rounded-2xl whitespace-nowrap transition-all border ${selectedCategory === cat ? 'bg-slate-800 text-white border-slate-800 font-semibold shadow-pastel-sm' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'}`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Projects Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {filteredProjects.map((project) => (
+                                    <div 
+                                        key={project.id}
+                                        className="glass-card rounded-3xl overflow-hidden hover:shadow-pastel-lg transition-all border border-slate-200/80 flex flex-col justify-between group"
+                                    >
+                                        <div>
+                                            {/* Thumbnail Cover */}
+                                            <div className="h-52 relative overflow-hidden bg-slate-100">
+                                                <img 
+                                                    src={project.thumbnail} 
+                                                    alt={project.title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                                                
+                                                <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-md border border-slate-200 rounded-full text-slate-800 font-mono text-xs font-bold shadow-pastel-sm">
+                                                    <i className="fa-solid fa-chart-line text-pastel-roseText mr-1.5"></i>
+                                                    {project.metricBadge}
+                                                </div>
+
+                                                <div className="absolute bottom-4 left-4">
+                                                    <span className="px-3 py-1 bg-pastel-blush text-pastel-roseText font-mono text-xs font-semibold rounded-full border border-pastel-rose/40">
+                                                        {project.category}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="p-6 space-y-3">
+                                                <h3 className="text-xl font-bold text-slate-800 group-hover:text-pastel-roseText transition-colors">
+                                                    {project.title}
+                                                </h3>
+
+                                                <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                                                    {project.summary}
+                                                </p>
+
+                                                <div className="flex flex-wrap gap-1.5 pt-2">
+                                                    {project.tags.map(tag => (
+                                                        <span key={tag} className="px-2.5 py-1 bg-canvas text-slate-600 text-[11px] font-mono rounded-xl border border-slate-200">
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Action CTA */}
+                                        <div className="p-6 pt-0">
+                                            <button 
+                                                onClick={() => setActiveProject(project)}
+                                                className="w-full py-2.5 bg-canvas hover:bg-slate-800 hover:text-white text-slate-800 font-mono text-xs font-semibold rounded-2xl border border-slate-200 transition-all flex items-center justify-center gap-2 group/btn"
+                                            >
+                                                <span>View Complete Case Study</span>
+                                                <i className="fa-solid fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* INTERACTIVE PLAYGROUND */}
+                        <section id="playground" className="space-y-6">
+                            <div className="border-b border-slate-200/60 pb-4">
+                                <span className="text-xs font-mono text-pastel-sageText uppercase tracking-wider mb-1 block">
+                                    <i className="fa-solid fa-flask mr-1"></i> Interactive Analysis
+                                </span>
+                                <h2 className="text-3xl font-bold text-slate-800">Engineering Playground & Beam Calculator</h2>
+                            </div>
+
+                            <BeamCalculatorWidget />
+                        </section>
+
+                        {/* SKILLS MATRIX */}
+                        <section id="skills" className="space-y-8">
+                            <div className="border-b border-slate-200/60 pb-4">
+                                <span className="text-xs font-mono text-pastel-periwinkleText uppercase tracking-wider mb-1 block">
+                                    <i className="fa-solid fa-layer-group mr-1"></i> Technical Matrix
+                                </span>
+                                <h2 className="text-3xl font-bold text-slate-800">Skills & Fabrication Tools</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {portfolio.skills.map((skillGroup, idx) => (
+                                    <div key={idx} className="glass-card rounded-3xl p-6 space-y-5 border border-slate-200/80 shadow-pastel-sm">
+                                        <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
+                                            <span className={`w-9 h-9 rounded-2xl flex items-center justify-center text-sm border ${skillGroup.colorClass}`}>
+                                                <i className={`fa-solid ${skillGroup.icon}`}></i>
+                                            </span>
+                                            <h3 className="text-base font-bold text-slate-800 font-mono">{skillGroup.category}</h3>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {skillGroup.items.map((item, i) => (
+                                                <div key={i} className="space-y-1.5">
+                                                    <div className="flex justify-between items-center text-xs font-mono">
+                                                        <span className="text-slate-700 font-medium">{item.name}</span>
+                                                        <span className="text-slate-500">{item.level}</span>
+                                                    </div>
+                                                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden p-0.5">
+                                                        <div 
+                                                            className={`h-full rounded-full transition-all duration-500 ${skillGroup.barColor}`}
+                                                            style={{ width: `${item.percent}%` }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* EXPERIENCE TIMELINE */}
+                        <section id="experience" className="space-y-8">
+                            <div className="border-b border-slate-200/60 pb-4">
+                                <span className="text-xs font-mono text-pastel-butterText uppercase tracking-wider mb-1 block">
+                                    <i className="fa-solid fa-briefcase mr-1"></i> Track Record
+                                </span>
+                                <h2 className="text-3xl font-bold text-slate-800">Experience & Leadership</h2>
+                            </div>
+
+                            <div className="space-y-6">
+                                {portfolio.experiences.map((exp, idx) => (
+                                    <div key={idx} className="glass-card rounded-3xl p-6 space-y-4 border border-slate-200/80 shadow-pastel-sm">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                                            <div>
+                                                <span className="px-3 py-0.5 bg-pastel-butter/60 text-pastel-butterText text-xs font-mono font-semibold rounded-full mr-2">
+                                                    {exp.type}
+                                                </span>
+                                                <h3 className="text-xl font-bold text-slate-800 inline-block">{exp.role}</h3>
+                                                <p className="text-xs font-mono text-slate-500 mt-1">
+                                                    <strong className="text-slate-800">{exp.company}</strong> • {exp.location}
+                                                </p>
+                                            </div>
+                                            <span className="text-xs font-mono text-slate-600 bg-canvas px-3.5 py-1.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
+                                                {exp.period}
+                                            </span>
+                                        </div>
+
+                                        <ul className="space-y-2 text-xs text-slate-600">
+                                            {exp.achievements.map((ach, i) => (
+                                                <li key={i} className="flex items-start gap-2">
+                                                    <i className="fa-solid fa-check text-pastel-roseText text-xs mt-0.5"></i>
+                                                    <span>{ach}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* RECRUITER OUTREACH & CONTACT */}
+                        <section id="contact" className="space-y-8">
+                            <div className="border-b border-slate-200/60 pb-4">
+                                <span className="text-xs font-mono text-pastel-roseText uppercase tracking-wider mb-1 block">
+                                    <i className="fa-solid fa-paper-plane mr-1"></i> Get In Touch
+                                </span>
+                                <h2 className="text-3xl font-bold text-slate-800">Recruiter Quick Outreach Helper</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                                <div className="lg:col-span-5 glass-card rounded-3xl p-6 space-y-4 border border-slate-200/80 shadow-pastel-sm font-mono text-xs">
+                                    <h3 className="text-base font-bold text-slate-800 font-sans flex items-center gap-2">
+                                        <i className="fa-solid fa-wand-magic-sparkles text-pastel-roseText"></i>
+                                        Outreach Message Builder
+                                    </h3>
+                                    <p className="text-slate-500 leading-relaxed font-sans">
+                                        Are you a recruiter or team lead? Fill out your company details to generate a customized interview invitation.
+                                    </p>
+
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="block text-slate-500 mb-1">YOUR NAME</label>
+                                            <input 
+                                                type="text" placeholder="e.g. Maya Lin"
+                                                value={recruiterName} onChange={(e) => setRecruiterName(e.target.value)}
+                                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-pastel-roseDeep"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-slate-500 mb-1">COMPANY NAME</label>
+                                            <input 
+                                                type="text" placeholder="e.g. Apple / Rivian / Boston Dynamics"
+                                                value={recruiterCompany} onChange={(e) => setRecruiterCompany(e.target.value)}
+                                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-pastel-roseDeep"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-slate-500 mb-1">TARGET ROLE</label>
+                                            <select 
+                                                value={recruiterRole} onChange={(e) => setRecruiterRole(e.target.value)}
+                                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-pastel-roseDeep"
+                                            >
+                                                <option>Product Design / Mechanical Hardware Engineer</option>
+                                                <option>Hardware Engineering Intern / Co-op</option>
+                                                <option>Mechatronics & Embedded Systems Developer</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="lg:col-span-7 glass-card rounded-3xl p-6 flex flex-col justify-between space-y-4 border border-slate-200/80 shadow-pastel-sm">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center text-xs font-mono">
+                                            <span className="text-slate-500">GENERATED MESSAGE PREVIEW</span>
+                                            <button 
+                                                onClick={() => navigator.clipboard.writeText(outreachNote)}
+                                                className="px-3 py-1 bg-pastel-blush text-pastel-roseText border border-pastel-rose/40 rounded-xl hover:bg-pastel-rose/30 transition-colors"
+                                            >
+                                                <i className="fa-regular fa-copy mr-1"></i> Copy Note
+                                            </button>
+                                        </div>
+
+                                        <div className="bg-canvas p-4 rounded-2xl border border-slate-100 font-mono text-xs text-slate-700 leading-relaxed whitespace-pre-wrap h-48 overflow-y-auto">
+                                            {outreachNote}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-4 font-mono text-xs">
+                                        <div className="flex gap-2">
+                                            <a href={portfolio.profile.links.linkedin} target="_blank" className="w-9 h-9 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:text-pastel-roseText transition-colors shadow-pastel-sm">
+                                                <i className="fa-brands fa-linkedin-in"></i>
+                                            </a>
+                                            <a href={portfolio.profile.links.github} target="_blank" className="w-9 h-9 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:text-pastel-roseText transition-colors shadow-pastel-sm">
+                                                <i className="fa-brands fa-github"></i>
+                                            </a>
+                                            <a href={portfolio.profile.links.grabcad} target="_blank" className="w-9 h-9 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:text-pastel-roseText transition-colors shadow-pastel-sm">
+                                                <i className="fa-solid fa-cube"></i>
+                                            </a>
+                                        </div>
+
+                                        <a 
+                                            href={`mailto:${portfolio.profile.links.email}?subject=Interview Request from ${recruiterCompany || 'Recruiter'}&body=${encodeURIComponent(outreachNote)}`}
+                                            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-2xl shadow-pastel-md transition-all flex items-center gap-2"
+                                        >
+                                            <i className="fa-solid fa-paper-plane"></i> Send via Email Client
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    </main>
+
+                    {/* FOOTER */}
+                    <footer className="border-t border-slate-200/60 bg-white py-8 text-center text-xs font-mono text-slate-500 space-y-1">
+                        <p>© {new Date().getFullYear()} {portfolio.profile.name} • Engineering Portfolio</p>
+                        <p className="text-slate-400">Pastel Editorial Aesthetic • Euler-Bernoulli Beam Equations • Physics Wave Visualizer</p>
+                    </footer>
+
+                    {/* MODALS */}
+                    {activeProject && (
+                        <ProjectDeepDiveModal 
+                            project={activeProject} 
+                            onClose={() => setActiveProject(null)} 
+                        />
+                    )}
+
+                    <CustomizerModal 
+                        isOpen={isCustomizerOpen}
+                        onClose={() => setIsCustomizerOpen(false)}
+                        portfolioData={portfolio}
+                        onSave={handleSavePortfolio}
+                    />
+
+                </div>
+            );
+        };
+
+        // Render React App
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
